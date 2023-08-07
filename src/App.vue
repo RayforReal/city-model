@@ -1,12 +1,11 @@
 <template>
-    <canvas id="webgl" ref="webglRef">浏览器不支持canvas，请切换浏览器重试</canvas>
+    <canvas id="webgl">浏览器不支持canvas，请切换浏览器重试</canvas>
 </template>
 <script setup>
-import { onMounted, ref } from 'vue';
+import { onMounted } from 'vue';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
-
-const webglRef = ref();
+import City from './core/City';
 
 const initCity = () => {
     // 获取canvas元素
@@ -15,7 +14,7 @@ const initCity = () => {
     const scene = new THREE.Scene();
     // 创建相机
     const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 100000);
-    camera.position.set(1000, 500, 100);
+    camera.position.set(0, 0, 100);
     scene.add(camera);
 
     // 创建渲染器
@@ -38,8 +37,14 @@ const initCity = () => {
     // 开启右键拖动
     controls.enablePan = true;
 
+    // 添加灯光
+    scene.add(new THREE.AmbientLight(0xadadad))
+
+    const city = new City(scene);
+
     const start = () => {
         controls.update();
+        city.start();
         // 渲染场景
         renderer.render(scene, camera)
         requestAnimationFrame(start)
